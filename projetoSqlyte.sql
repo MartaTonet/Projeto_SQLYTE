@@ -1110,6 +1110,7 @@ VALUES
 
 
     --TEM ALGUNS CLIENTES QUE SÃO DEPENDENTES. MOSTRAR DE QUE CLIENTES ELES SÃO DEPENDENTES
+
         -- mostrar dados da tabela cliente
 SELECT * FROM cliente
 
@@ -1120,27 +1121,148 @@ SELECT * FROM conta
 SELECT * FROM cliente_conta
 
 
+    -- ALGUNS CLIENTES QUE SÃO DEPENDENTES. PRIMEIRA FORMA DE MOSTRAR DE QUE CLIENTES ELES SÃO DEPENDENTES
+elect  c.id as 'Id do Cliente',c.nome as 'Nome do Cliente',cc.dependente as 'Dependente de:'
+from cliente c 
+join cliente_conta cc on cc.id_cliente = c.id
+join conta co on co.id=cc.id_conta
+WHERE dependente NOT LIKE "%0%"
+GROUP by id_cliente
+ORDER by c.id DESC 
+;
+
+
+UPDATE cliente_conta 
+SET dependente = 'Rosangela(Mãe)'
+WHERE id_cliente = 26;
+
+UPDATE cliente_conta 
+SET dependente ='Rosangela(Mãe'
+WHERE id_cliente = 28
+
+
+UPDATE cliente_conta 
+SET dependente = 'Rosangela(Mãe)'
+WHERE id_cliente = 29
+
+
+UPDATE cliente_conta 
+SET dependente = 'Karliana'
+WHERE id_cliente = 30;
+
+UPDATE cliente_conta 
+SET dependente = 'Edwin Alexandre'
+WHERE id_cliente = 31
+
+UPDATE cliente_conta 
+SET dependente = 'Robert Raimundo Garabán Garcías'
+WHERE id_cliente = 32
+
+UPDATE cliente_conta 
+SET dependente = 'Roselino Jose Alvarado Alvarado'
+WHERE id_cliente = 33
+
+UPDATE cliente_conta 
+SET dependente = 'Robert Raimundo Garabán Garcías'
+WHERE id_cliente = 34
+
+UPDATE cliente_conta 
+SET dependente = 'Karliana'
+WHERE id_cliente = 35
+
+
+
+-- SEGUNDA  FORMA DE MOSTAR DE QUE CLIENTES ELES SÃO DEPENDENTES SERIA USANDO O CÓDIGO A BAIXO MAS NÃO MOSTRARÁ O NOME DOS CLIENTES DE 
+-- QUEM SÃO DEPENDENTES
+
+Select  c.id as 'Id do Cliente',c.nome as 'Nome do Cliente',cc.dependente as 'Dependente'
+from cliente c 
+join cliente_conta cc on cc.id_cliente = c.id
+join conta co on co.id=cc.id_conta
+WHERE dependente NOT LIKE "%0%"
+GROUP by id_cliente
+ORDER by c.id DESC;
+
+UPDATE cliente_conta SET dependente='Tem dependente' WHERE dependente = true;
+
+
+-- TERCEIRA FORMA DE MOSTRAR DE QUE CLIENTES ELES SÃO DEPENDENTES
+
+SELECT id_cliente AS Cliente, id_conta AS Conta, dependente AS Dependente
+FROM cliente_conta
+WHERE (id_cliente IN (1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35)
+AND dependente > 0)
 
 
 
 
--- 5 CONTAS COM MAIOR E MENOR NÚMERO DE TRANSAÇÕES
 
 
---Mostrar todas transações das contas dos cliente
+
+--  Quais foram as 5 contas que:
+--Mais fizeram transações
+--Menos fizeram transações
+
+
 SELECT * FROM transacao
 
 -- Mostrar os tipos de transações feitas pelos clientes
 SELECT * FROM tipo_transacao
 
 -- Os que mais fizeram transações
-select max(id) AS 'MAIORES TRANSAÇÕES',id_cliente_conta AS 'ID DA CONTA DO CLIENTE' 
-from transacao
+select 
+COUNT(trs.id) AS 'Quantidade',
+MAX(id) AS 'MAIORES TRANSAÇÕES',id_cliente_conta AS 'ID DA CONTA DO CLIENTE' 
+from transacao trs
 group by id_cliente_conta
 order by id desc limit 5;
 
 -- Os que menos fizeram transações
-select min(id) AS'MENORES TRANSAÇÕES',id_cliente_conta AS 'ID DA CONTA DO CLIENTE' 
-from transacao
+select 
+COUNT(trs.id) AS 'Quantidade',
+MIN(id) AS'MENORES TRANSAÇÕES',id_cliente_conta AS 'ID DA CONTA DO CLIENTE'
+from transacao trs
 group by id_cliente_conta
 order by id desc limit 5;
+
+
+
+--Tivemos uma perda de dados e não sabemos qual é o saldo de cada conta, 
+--mas temos todas as transações efetuadas.
+--Queremos saber qual saldo total das contas registradas em banco!
+--Reparem que temos alguns tipos de transações que subtraem dinheiro e outros que somam
+
+--Mostrar todas as trasanções da conta do id cliente conta 
+SELECT * FROM transacao
+
+--Mostrar todos os tipos de trasanções
+SELECT * FROM tipo_transacao
+
+
+--TODAS AS TRANSAÇÕES EFECTUADAS.
+SELECT trs.id_tipo_transacao, ttrs.descricao,
+COUNT(trs.id) AS 'Quantidade',
+SUM(valor) AS 'Soma',
+MAX(valor) aS 'Máxima Transação',
+MIN(valor) As 'Miníma Transação'
+FROM transacao trs
+JOIN tipo_transacao ttrs 
+ON trs.id_tipo_transacao = ttrs.id
+GROUP by trs.id_tipo_transacao, descricao 
+ORDER BY 1;
+
+
+--Queremos saber qual saldo total das contas registradas em banco!
+
+select cot.id as 'ID DO CLIENTE', cot.numero AS 'NUMERO DA CONTA DO CLIENTE', trs.id_cliente_conta AS 'ID DA CONTA DO CLIENTE',
+trs.id_tipo_transacao as 'ID DO TIPO DE TRANSAÇÃO',  trs.valor as 'VALOR DA TRANSAÇÃO',
+ttrs.descricao AS 'TIPO DE TRANSAÇÃO REALIZADA'
+from conta cot
+join transacao trs on cot.id = trs.id_cliente_conta
+join tipo_transacao ttrs 
+group by trs.id_cliente_conta
+
+
+
+--Mostrar tipos de transações que  subtrai valores da conta
+SELECT* FROM tipo_transacao WHERE id > 1
