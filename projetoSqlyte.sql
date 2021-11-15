@@ -1122,6 +1122,7 @@ SELECT * FROM cliente_conta
 
 
     -- ALGUNS CLIENTES QUE SÃO DEPENDENTES. PRIMEIRA FORMA DE MOSTRAR DE QUE CLIENTES ELES SÃO DEPENDENTES
+    --EXECUTAR ESSSE CODIGO A BAIXO NOVAMENTE DEPOIS DE EXECUTAR TODOS OS UPDATE A SEGUIR DELE.
 elect  c.id as 'Id do Cliente',c.nome as 'Nome do Cliente',cc.dependente as 'Dependente de:'
 from cliente c 
 join cliente_conta cc on cc.id_cliente = c.id
@@ -1174,6 +1175,7 @@ WHERE id_cliente = 35
 
 -- SEGUNDA  FORMA DE MOSTAR DE QUE CLIENTES ELES SÃO DEPENDENTES SERIA USANDO O CÓDIGO A BAIXO MAS NÃO MOSTRARÁ O NOME DOS CLIENTES DE 
 -- QUEM SÃO DEPENDENTES
+--EXECUTAR NOVAMENTE ESSE CÓDIOGO A BAIXO DEPOIS DE EXECUTAR O UPDATE A SEGUIR DELE
 
 Select  c.id as 'Id do Cliente',c.nome as 'Nome do Cliente',cc.dependente as 'Dependente'
 from cliente c 
